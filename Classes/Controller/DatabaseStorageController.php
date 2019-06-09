@@ -170,7 +170,8 @@ class DatabaseStorageController extends ActionController
     {
         $identifier = $entry->getStorageidentifier();
         $this->databaseStorageRepository->remove($entry);
-        $this->addFlashMessage($this->translator->translateById('storage.flashmessage.entryRemoved', [], null, null, 'Main', 'Wegmeister.DatabaseStorage'));
+        $message = $this->translator->translateById('storage.flashmessage.entryRemoved', [], null, null, 'Main', 'Wegmeister.DatabaseStorage');
+        $this->addFlashMessage($message ?? 'Entry successfully removed.');
         $this->redirect('show', null, null, ['identifier' => $identifier]);
     }
 
@@ -195,8 +196,8 @@ class DatabaseStorageController extends ActionController
         $this->view->assign('count', $count);
 
         if ($redirect) {
-            // TODO: Translate flash message.
-            $this->addFlashMessage($this->translator->translateById('storage.flashmessage.entriesRemoved', [], null, null, 'Main', 'Wegmeister.DatabaseStorage'));
+            $message = $this->translator->translateById('storage.flashmessage.entriesRemoved', [], null, null, 'Main', 'Wegmeister.DatabaseStorage');
+            $this->addFlashMessage($message ?? 'Entries successfully removed.');
             $this->redirect('index');
         }
     }
