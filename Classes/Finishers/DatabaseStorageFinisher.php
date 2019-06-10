@@ -17,7 +17,7 @@ namespace Wegmeister\DatabaseStorage\Finishers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Form\Core\Model\AbstractFinisher;
 use Neos\Form\Exception\FinisherException;
-
+use Neos\Media\Domain\Model\ImageInterface;
 use Wegmeister\DatabaseStorage\Domain\Model\DatabaseStorage;
 use Wegmeister\DatabaseStorage\Domain\Repository\DatabaseStorageRepository;
 
@@ -45,7 +45,7 @@ class DatabaseStorageFinisher extends AbstractFinisher
     protected function executeInternal()
     {
         $formRuntime = $this->finisherContext->getFormRuntime();
-        $formValues = $formRuntime->getFormState()->getFormValues();
+        $formValues = $this->transformValues($formRuntime->getFormState()->getFormValues());
 
         $identifier = $this->parseOption('identifier');
         if (!$identifier) {
@@ -59,5 +59,21 @@ class DatabaseStorageFinisher extends AbstractFinisher
             ->setDateTime(new \DateTime());
 
         $this->databaseStorageRepository->add($dbStorage);
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return array
+     */
+    protected function transformValues(array $values): array
+    {
+        \array_walk($values, function(&$value, $property) {
+            if ($value instanceof ImageInterface) {
+                 $value = $value->getResource();
+            }
+        });
+
+        return $values;
     }
 }
